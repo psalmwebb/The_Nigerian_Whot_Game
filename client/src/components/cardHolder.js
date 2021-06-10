@@ -6,7 +6,9 @@ import UTILS from "../utils/utils"
 
 export default function CardHolder({type}){
 
-    const {gameState,playCard,penalty,setPenalty,pickACard,playerTurns,setPlayerTurns} = useContext(CardContext)
+    const {gameState,playCard,penalty,
+           setPenalty,pickACard,playerTurns,setPickACardCounter,
+           gameMode,setPlayerTurns} = useContext(CardContext)
 
     const cardPossessed = useRef([])
 
@@ -22,20 +24,25 @@ export default function CardHolder({type}){
     useEffect(()=>{
         cardPossessed.current = cardObjs.map((obj)=> obj.id)
 
-        if(type === "otherPlayer" && playerTurns === "otherPlayer"){
-            new UTILS.AI(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,setPenalty).play()
+        if(type === "otherPlayer" && playerTurns === "otherPlayer" && gameMode === "single player"){
+            new UTILS.AI(gameState,playerTurns,setPlayerTurns,
+                        playCard,pickACard,penalty,setPenalty,setPickACardCounter).play()
         }
-    })
+    },[gameState,gameMode,penalty,pickACard,playCard,playerTurns,
+        setPenalty,type,cardObjs,setPlayerTurns,setPickACardCounter])
+
+    // console.log(cardObjs)
 
     return (
         <div className={cardHolderStyle} style={addStyle} id={type}>
            {
-               cardObjs.map((cardObj,i)=>{
+               cardObjs.length ? cardObjs.map((cardObj,i)=>{
                 return <Card left={i * 15 + 3} top={0} id={cardObj.id}
                              width ={10} key={Math.random()} 
                              shouldAnimate={!cardPossessed.current.includes(cardObj.id)}
                              cardObj = {cardObj} playCard={playCard} type ={type}/>
-               })
+               }) : null
+
            }
         </div>
 

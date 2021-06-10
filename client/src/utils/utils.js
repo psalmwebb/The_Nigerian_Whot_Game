@@ -2,7 +2,8 @@
 const UTILS = {
     
   AI:class{
-      constructor(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,setPenalty){
+      constructor(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,setPenalty,setPickACardCounter){
+          this.gameState = gameState
           this.ownedCards = gameState.otherPlayer
           this.numOfCards = gameState.otherPlayer.length
           this.playerTurns = playerTurns
@@ -12,9 +13,11 @@ const UTILS = {
           this.setPlayerTurns = setPlayerTurns
           this.penalty = penalty
           this.setPenalty = setPenalty
+          this.setPickACardCounter = setPickACardCounter
       }  
       
   autoPickCard(numOfTimes){
+
     let count = numOfTimes
     let s = setInterval(()=>{
       
@@ -27,6 +30,7 @@ const UTILS = {
 
 
   autoPlayCard(player,cardObj,numOfTimes){
+
     let count = numOfTimes
     let s = setInterval(()=>{
       
@@ -42,6 +46,8 @@ const UTILS = {
   }
 
   play(){
+
+    if(!this.gameState.cardStore.length) return 
     
     if(this.penalty.to === "otherPlayer"){
       switch(this.penalty.what){
@@ -86,9 +92,30 @@ const UTILS = {
     else{
        this.autoPickCard(1)
     }
-    
+  
 
-    this.setPlayerTurns("me")
+    switch(cardChosen.cardNum){
+       case 1:
+       case 8:
+         console.log("Ai - Hold On")
+         this.setPlayerTurns("otherPlayer")
+         this.setPenalty({from:"otherPlayer",to:"me",what:"Hold on"})
+         break
+       case 2:
+         console.log("Ai - Pick two")
+         this.setPlayerTurns("me")
+         this.setPenalty({from:"otherPlayer",to:"me",what:"Pick two"})
+         break
+       case 14:
+         console.log("Ai - Go to Market")
+         this.setPlayerTurns("me")
+         this.setPenalty({from:"otherPlayer",to:"me",what:"Go to market"})
+         break
+       default:
+          this.setPlayerTurns("me")
+          this.setPenalty({from:"",to:"",what:""})
+          this.setPickACardCounter(0)
+    }
   }
 }
 }

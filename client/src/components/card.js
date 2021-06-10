@@ -1,12 +1,16 @@
 import {cardStyle} from "../css/playground.module.css"
 import {useCallback,useRef,useContext} from "react"
 import {CardContext} from "../contexts/cardContext"
+import {SocketContext} from "../contexts/socketContext"
+
 
 export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate})
 {
     const cardRef = useRef()
 
     const {playerTurns,setPlayerTurns,pickACardCounter,setPenalty,gameState} = useContext(CardContext)
+
+    const {socket} = useContext(SocketContext)
 
      
     const prevPlayedCard = gameState.playArea[gameState.playArea.length - 1]
@@ -95,19 +99,45 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
       switch(newCardObj.cardNum){
         case 1:
         case 8:
+          if(Object.keys(socket).length){
+              socket.emit("update-penalty",{from:"me",to:"otherPlayer",what:"Hold on"})
+              socket.emit("card-played",newCardObj)
+          }
           setPenalty({from:"me",to:"otherPlayer",what:"Hold on"})
+          playCard(type,newCardObj)
           break
         case 2:
+          if(Object.keys(socket).length) 
+          {
+              socket.emit("update-penalty",{from:"me",to:"otherPlayer",what:"Pick two"})
+              socket.emit("card-played",newCardObj)
+              socket.emit("switch-turn","me")
+          }
+          playCard(type,newCardObj)
+          setPlayerTurns("otherPlayer")
           setPenalty({from:"me",to:"otherPlayer",what:"Pick two"})
           break
         case 14:
+          if(Object.keys(socket).length){
+              socket.emit("update-penalty",{from:"me",to:"otherPlayer",what:"Pick two"})
+              socket.emit("card-played",newCardObj)
+              socket.emit("switch-turn","me")
+          }
+          playCard(type,newCardObj)
+          setPlayerTurns("otherPlayer")
           setPenalty({from:"me",to:"otherPlayer",what:"Go to market"})
           break
         default:
+          if(Object.keys(socket).length){
+            socket.emit("card-played",newCardObj)
+            socket.emit("switch-turn","me")
+            socket.emit("update-penalty",{from:"",to:"",what:""})
+            socket.emit("set-remote-counter",0)
+          }
+          playCard(type,newCardObj)
+          setPenalty({from:"",to:"",what:""})
+          setPlayerTurns("otherPlayer")
       }
-
-      playCard(type,newCardObj)
-      setPlayerTurns("otherPlayer")
     }
 
     return (
