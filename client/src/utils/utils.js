@@ -2,7 +2,8 @@
 const UTILS = {
     
   AI:class{
-      constructor(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,setPenalty,setPickACardCounter){
+      constructor(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,
+        setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay){
           this.gameState = gameState
           this.ownedCards = gameState.otherPlayer
           this.numOfCards = gameState.otherPlayer.length
@@ -14,6 +15,8 @@ const UTILS = {
           this.penalty = penalty
           this.setPenalty = setPenalty
           this.setPickACardCounter = setPickACardCounter
+          this.cardMustPlay = cardMustPlay
+          this.setCardMustPlay = setCardMustPlay
       }  
       
   autoPickCard(numOfTimes){
@@ -75,13 +78,21 @@ const UTILS = {
   // console.log(this.ownedCards)
    
     let cardChosen = {}
+    let cardsToPlay;
 
     let cardsPosLeft = Array.from(cards).map((card)=> card.style.left.replace(/%/,""))
 
-    let cardsToPlay = this.lastCardPlayed ? this.ownedCards.map((card,i)=> ({...card,type:"otherPlayer",initialLeft:cardsPosLeft[i]}))
-                      .filter(card=> card.cardNum === this.lastCardPlayed?.cardNum || card.icon === this.lastCardPlayed?.icon)
-                      : this.ownedCards.map((card,i)=> ({...card,type:"otherPlayer",initialLeft:cardsPosLeft[i]}))
-                                          
+    // console.log(this.cardMustPlay)
+
+    if(this.cardMustPlay){
+       cardsToPlay = this.ownedCards.filter(card=> card.icon === this.cardMustPlay).map((card,i)=>({...card,type:"otherPlayer",initialLeft:cardsPosLeft[i]}))
+      //  console.log(cardsToPlay)
+    }
+    else{
+      cardsToPlay = this.lastCardPlayed ? this.ownedCards.map((card,i)=> ({...card,type:"otherPlayer",initialLeft:cardsPosLeft[i]}))
+        .filter(card=> card.cardNum === this.lastCardPlayed?.cardNum || card.icon === this.lastCardPlayed?.icon)
+        : this.ownedCards.map((card,i)=> ({...card,type:"otherPlayer",initialLeft:cardsPosLeft[i]}))
+    }                                     
 
     if(cardsToPlay.length){
       cardChosen = cardsToPlay[Math.floor(Math.random() * cardsToPlay.length)]
@@ -98,8 +109,8 @@ const UTILS = {
        case 1:
        case 8:
          console.log("Ai - Hold On")
-         this.setPlayerTurns("otherPlayer")
          this.setPenalty({from:"otherPlayer",to:"me",what:"Hold on"})
+         this.setPlayerTurns("otherPlayer")
          break
        case 2:
          console.log("Ai - Pick two")
@@ -116,6 +127,8 @@ const UTILS = {
           this.setPenalty({from:"",to:"",what:""})
           this.setPickACardCounter(0)
     }
+
+    // this.setCardMustPlay("")
   }
 }
 }

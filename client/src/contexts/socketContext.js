@@ -15,7 +15,7 @@ export default function SocketContextProvider({children}){
     const [isHost,setIsHost] = useState(null)
 
     const [socketId,setSocketId] = useState(null)
-    const {gameMode,setPenalty,playRemoteCard,setPickACardCounter, 
+    const {gameMode,setPenalty,setCardMustPlay,playCard,setPickACardCounter, 
            pickRemoteCard,setPlayerTurns} = useContext(CardContext)
 
     useEffect(()=>{
@@ -32,9 +32,11 @@ export default function SocketContextProvider({children}){
          if(!Object.keys(socket).length) return
 
          socket.on("card-played",(newCardObj)=>{
-            console.log(newCardObj)
 
-            playRemoteCard(newCardObj)
+            newCardObj.type = "otherPlayer"
+            // newCardObj.initialLeft = -newCardObj.initialLeft
+
+            playCard("otherPlayer",newCardObj)
 
          })
 
@@ -61,11 +63,18 @@ export default function SocketContextProvider({children}){
             setPickACardCounter(counter)
          })
 
+         socket.on("card-must-play",cardMustPlay=>{
+            setCardMustPlay(cardMustPlay)
+
+            console.log("Give me ",cardMustPlay)
+         })
+
          return ()=>{
              if(Object.keys(socket).length){
                  socket.off("card-played",()=>{})
                  socket.off("switch-turn",()=>{})
                  socket.off("remote-pick-card",()=>{})
+                 socket.off("card-must-play",()=>{})
              }
          }
 

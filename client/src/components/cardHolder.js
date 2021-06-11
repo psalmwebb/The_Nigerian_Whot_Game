@@ -8,7 +8,7 @@ export default function CardHolder({type}){
 
     const {gameState,playCard,penalty,
            setPenalty,pickACard,playerTurns,setPickACardCounter,
-           gameMode,setPlayerTurns} = useContext(CardContext)
+           gameMode,setPlayerTurns,cardMustPlay,setCardMustPlay} = useContext(CardContext)
 
     const cardPossessed = useRef([])
 
@@ -21,15 +21,16 @@ export default function CardHolder({type}){
         bottom:type === "me" ? "0" : null
     }
 
+    const AI = new UTILS.AI(gameState,playerTurns,setPlayerTurns,playCard,
+               pickACard,penalty,setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay)
+
     useEffect(()=>{
         cardPossessed.current = cardObjs.map((obj)=> obj.id)
 
         if(type === "otherPlayer" && playerTurns === "otherPlayer" && gameMode === "single player"){
-            new UTILS.AI(gameState,playerTurns,setPlayerTurns,
-                        playCard,pickACard,penalty,setPenalty,setPickACardCounter).play()
+            AI.play()
         }
-    },[gameState,gameMode,penalty,pickACard,playCard,playerTurns,
-        setPenalty,type,cardObjs,setPlayerTurns,setPickACardCounter])
+    },[gameState,gameMode,penalty,playerTurns,type,cardMustPlay])
 
     // console.log(cardObjs)
 

@@ -21,6 +21,10 @@ export default function CardContextProvider({children})
     const [playerTurns,setPlayerTurns] = useState("me")
 
     const [pickACardCounter,setPickACardCounter] = useState(0)
+
+    const [showCardPicker,setShowCardPicker] = useState(false)
+
+    const [cardMustPlay,setCardMustPlay] = useState("")
    
     const [penalty,setPenalty] = useState({
         from:"",
@@ -55,7 +59,7 @@ export default function CardContextProvider({children})
 
     useEffect(()=>{
 
-        console.log(gameState.cardStore.length)
+        // console.log(gameState.cardStore.length)
         if(gameState.cardStore.length === 0 && gameState.playArea.length !== 0){
             console.log("Yes it is working")
 
@@ -75,7 +79,7 @@ export default function CardContextProvider({children})
 
     function shareCard(player)
     {
-       console.log(gameState.cardStore.length)
+    //    console.log(gameState.cardStore.length)
 
        setGameState((prevGameState)=>{
             let newGameState = {
@@ -101,19 +105,6 @@ export default function CardContextProvider({children})
         })
     }
 
-    function playRemoteCard(cardObj){
-        setGameState(prevGameState=>{
-
-            let newGameState = {
-                ...prevGameState,
-                playArea:[...prevGameState.otherPlayer,prevGameState.otherPlayer.find(card=> card.id === cardObj.id)],
-                otherPlayer:prevGameState.otherPlayer.filter(card=> card.id !== cardObj.id)
-            }
-
-            return newGameState
-        })
-    }
-
     function pickACard(type){
         
         setGameState(prevGameState=>{
@@ -126,7 +117,7 @@ export default function CardContextProvider({children})
         })
     }
 
-    function pickRemoteCard(cardObj){
+    function pickRemoteCard(){
         
         setGameState(prevGameState=>{
 
@@ -223,11 +214,11 @@ export default function CardContextProvider({children})
     }
 
     return (
-        <CardContext.Provider value={{gameMode,
-        setGameMode,gameState,shareCard,playCard,playerTurns,
-        setPickACardCounter,pickACardCounter,setPlayerTurns,
-        penalty,setPenalty,playRemoteCard,pickRemoteCard,pickACard,setGameState,
-        setCardStore,unSetGameState,setCanShare,canShare,initCardObj}}>
+        <CardContext.Provider value={{gameMode,showCardPicker,cardMustPlay,setCardMustPlay,
+            setShowCardPicker,setGameMode,gameState,shareCard,playCard,playerTurns,
+            setPickACardCounter,pickACardCounter,setPlayerTurns,
+            penalty,setPenalty,pickRemoteCard,pickACard,setGameState,
+            setCardStore,unSetGameState,setCanShare,canShare,initCardObj}}>
             {children}
         </CardContext.Provider>
     )

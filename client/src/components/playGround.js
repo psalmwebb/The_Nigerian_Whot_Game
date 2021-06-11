@@ -3,13 +3,15 @@ import CardHolder from "./cardHolder"
 import CardStore from "./cardStore"
 import {CardContext} from "../contexts/cardContext"
 import PlayArea from "./playArea"
+import CardPicker from "./cardPicker"
 // import { CardContext } from "../contexts/cardContext"
 import {useContext,useEffect,useRef} from "react"
 import { SocketContext } from "../contexts/socketContext"
 
 export default function PlayGround({history:{push}}) {
     
-    const {gameMode,setCanShare,setCardStore,unSetGameState,initCardObj} = useContext(CardContext)
+    const {gameMode,setCanShare,showCardPicker,setCardStore,
+           unSetGameState,initCardObj} = useContext(CardContext)
     const {socket,isHost} = useContext(SocketContext)
 
       if(gameMode === null){
@@ -90,6 +92,7 @@ export default function PlayGround({history:{push}}) {
          <CardStore mode={gameMode}/>
          <PlayArea mode={gameMode}/>   
          <CardHolder type="me" mode={gameMode}/>
+         {showCardPicker && <CardPicker/>}
        </div>
     )
 }

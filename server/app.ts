@@ -50,6 +50,10 @@ io.on("connection",(socket:any)=>{
         socket.broadcast.to(socket.handshake.query.id).emit("set-remote-counter",counter)
     })
 
+    socket.on("card-must-play",(cardMustPlay:string)=>{
+        socket.broadcast.to(socket.handshake.query.id).emit("card-must-play",cardMustPlay)
+    })
+
     socket.on("disconnect",()=>{
         console.log(socket.id, " just disconnected")
     })

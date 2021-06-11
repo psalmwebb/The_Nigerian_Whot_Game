@@ -8,7 +8,8 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
 {
     const cardRef = useRef()
 
-    const {playerTurns,setPlayerTurns,pickACardCounter,setPenalty,gameState} = useContext(CardContext)
+    const {playerTurns,cardMustPlay,setCardMustPlay,setShowCardPicker,setPlayerTurns,
+          pickACardCounter,setPenalty,gameState} = useContext(CardContext)
 
     const {socket} = useContext(SocketContext)
 
@@ -85,9 +86,15 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
         console.log("Not your turn")
         return
       }
-
-      if(prevPlayedCard){
-        if(prevPlayedCard.icon !== cardObj.icon && prevPlayedCard.cardNum !== cardObj.cardNum)
+      
+      if(cardMustPlay){
+        if(cardObj.icon !== cardMustPlay){
+          console.log("You must play ",cardMustPlay)
+          return
+        }
+      }
+      else if(prevPlayedCard){
+        if((prevPlayedCard.icon !== cardObj.icon && prevPlayedCard.cardNum !== cardObj.cardNum) && cardObj.icon !== "whot")
         {
           console.log("Card do not match..")
           return
@@ -105,6 +112,7 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           }
           setPenalty({from:"me",to:"otherPlayer",what:"Hold on"})
           playCard(type,newCardObj)
+          setCardMustPlay("")
           break
         case 2:
           if(Object.keys(socket).length) 
@@ -116,6 +124,7 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           playCard(type,newCardObj)
           setPlayerTurns("otherPlayer")
           setPenalty({from:"me",to:"otherPlayer",what:"Pick two"})
+          setCardMustPlay("")
           break
         case 14:
           if(Object.keys(socket).length){
@@ -126,7 +135,13 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           playCard(type,newCardObj)
           setPlayerTurns("otherPlayer")
           setPenalty({from:"me",to:"otherPlayer",what:"Go to market"})
+          setCardMustPlay("")
           break
+        case 20:
+          if(Object.keys(socket).length){}
+          playCard(type,newCardObj)
+          setShowCardPicker(true)
+          break 
         default:
           if(Object.keys(socket).length){
             socket.emit("card-played",newCardObj)
@@ -137,6 +152,7 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           playCard(type,newCardObj)
           setPenalty({from:"",to:"",what:""})
           setPlayerTurns("otherPlayer")
+          setCardMustPlay("")
       }
     }
 
