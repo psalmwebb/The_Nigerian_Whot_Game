@@ -6,7 +6,7 @@ import UTILS from "../utils/utils"
 
 export default function CardHolder({type}){
 
-    const {gameState,playCard,penalty,
+    const {gameState,hasGameEnd,playCard,penalty,
            setPenalty,pickACard,playerTurns,setPickACardCounter,
            gameMode,setPlayerTurns,cardMustPlay,setCardMustPlay} = useContext(CardContext)
 
@@ -27,10 +27,18 @@ export default function CardHolder({type}){
     useEffect(()=>{
         cardPossessed.current = cardObjs.map((obj)=> obj.id)
 
-        if(type === "otherPlayer" && playerTurns === "otherPlayer" && gameMode === "single player"){
+        if(type === "otherPlayer" && playerTurns === "otherPlayer" && gameMode === "single player" && hasGameEnd !== true){
             AI.play()
         }
-    },[gameState,gameMode,penalty,playerTurns,type,cardMustPlay])
+
+        if(gameState.otherPlayer.length === 2 && gameState.playArea.length){
+            console.log("semi last card")
+        }
+        else if(gameState.otherPlayer.length === 1 && gameState.playArea.length){
+            console.log("Last card")
+        }
+
+    },[cardObjs,gameMode,playerTurns,type])
 
     // console.log(cardObjs)
 
@@ -38,9 +46,9 @@ export default function CardHolder({type}){
         <div className={cardHolderStyle} style={addStyle} id={type}>
            {
                cardObjs.length ? cardObjs.map((cardObj,i)=>{
-                return <Card left={i * 15 + 3} top={0} id={cardObj.id}
+                return <Card left={i * 15 + 3} top={0} id={cardObj?.id}
                              width ={10} key={Math.random()} 
-                             shouldAnimate={!cardPossessed.current.includes(cardObj.id)}
+                             shouldAnimate={!cardPossessed.current?.includes(cardObj?.id)}
                              cardObj = {cardObj} playCard={playCard} type ={type}/>
                }) : null
 

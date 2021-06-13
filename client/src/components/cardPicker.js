@@ -15,8 +15,10 @@ export default function CardPicker(){
        setCardMustPlay(e.target.id.toLowerCase())
        setShowCardPicker(false)
        setPlayerTurns("otherPlayer")
-       socket.emit("card-must-play",e.target.id.toLowerCase())
-       socket.emit("switch-turn","me")
+       if(Object.keys(socket).length){
+        socket.emit("card-must-play",e.target.id.toLowerCase())
+        socket.emit("switch-turn","me")
+       }
     }
     
     return (

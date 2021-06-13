@@ -8,7 +8,7 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
 {
     const cardRef = useRef()
 
-    const {playerTurns,cardMustPlay,setCardMustPlay,setShowCardPicker,setPlayerTurns,
+    const {playerTurns,hasGameEnd,cardMustPlay,setCardMustPlay,setShowCardPicker,setPlayerTurns,
           pickACardCounter,setPenalty,gameState} = useContext(CardContext)
 
     const {socket} = useContext(SocketContext)
@@ -68,6 +68,8 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
 
     function playThisCard()
     {
+      if(hasGameEnd) return
+
       if(type !== "me") return
 
       console.log(pickACardCounter)
@@ -158,8 +160,8 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
 
     return (
         <div className={cardStyle} onClick={playThisCard} style={localStyle} ref={cardRef}>
-          <div>{cardObj.icon}</div>
-          <span>{cardObj.cardNum}</span>
+          <div>{cardObj?.icon}</div>
+          <span>{cardObj?.cardNum}</span>
         </div>
     )
 }

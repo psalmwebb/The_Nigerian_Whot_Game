@@ -24,7 +24,11 @@ export default function CardContextProvider({children})
 
     const [showCardPicker,setShowCardPicker] = useState(false)
 
+    const [hasGameEnd,setHasGameEnd] = useState(false)
+
     const [cardMustPlay,setCardMustPlay] = useState("")
+
+    const [scores,setScores] = useState([0,0])
    
     const [penalty,setPenalty] = useState({
         from:"",
@@ -216,8 +220,8 @@ export default function CardContextProvider({children})
     return (
         <CardContext.Provider value={{gameMode,showCardPicker,cardMustPlay,setCardMustPlay,
             setShowCardPicker,setGameMode,gameState,shareCard,playCard,playerTurns,
-            setPickACardCounter,pickACardCounter,setPlayerTurns,
-            penalty,setPenalty,pickRemoteCard,pickACard,setGameState,
+            setPickACardCounter,pickACardCounter,setPlayerTurns,hasGameEnd,setHasGameEnd,
+            penalty,setPenalty,pickRemoteCard,pickACard,setGameState,scores,setScores,
             setCardStore,unSetGameState,setCanShare,canShare,initCardObj}}>
             {children}
         </CardContext.Provider>

@@ -54,6 +54,22 @@ io.on("connection",(socket:any)=>{
         socket.broadcast.to(socket.handshake.query.id).emit("card-must-play",cardMustPlay)
     })
 
+    socket.on("info-card",(message:string)=>{
+      socket.broadcast.to(socket.handshake.query.id).emit("info-card",message)
+    })
+
+    socket.on("unset-gamestate",(message:string)=>{
+        socket.broadcast.to(socket.handshake.query.id).emit("unset-gamestate",message)
+    })
+
+    socket.on("update-scores",(scores:Object)=>{
+        socket.broadcast.to(socket.handshake.query.id).emit("update-scores",scores)
+    })
+
+    socket.on("game-ended",(bValue:boolean)=>{
+        socket.broadcast.to(socket.handshake.query.id).emit("game-ended",bValue)
+    })
+  
     socket.on("disconnect",()=>{
         console.log(socket.id, " just disconnected")
     })

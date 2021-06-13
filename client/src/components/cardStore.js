@@ -5,10 +5,10 @@ import {SocketContext} from "../contexts/socketContext"
 import {cardStoreStyle} from "../css/playground.module.css"
 
 
-export default function CardStore({mode})
+export default function CardStore()
 {
       
-    const {gameState,shareCard,playerTurns,
+    const {gameState,hasGameEnd,shareCard,playerTurns,
         pickACard,canShare,pickACardCounter,
         setPickACardCounter,setPenalty,setPlayerTurns} = useContext(CardContext)
 
@@ -51,7 +51,7 @@ export default function CardStore({mode})
 
     function handleCardStoreClick(){
 
-        // console.log(playerTurns)
+        if(hasGameEnd) return
 
         if(playerTurns !== "me") return
 

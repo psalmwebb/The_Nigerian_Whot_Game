@@ -16,7 +16,7 @@ export default function SocketContextProvider({children}){
 
     const [socketId,setSocketId] = useState(null)
     const {gameMode,setPenalty,setCardMustPlay,playCard,setPickACardCounter, 
-           pickRemoteCard,setPlayerTurns} = useContext(CardContext)
+           pickRemoteCard,setPlayerTurns,setHasGameEnd,setScores,unSetGameState} = useContext(CardContext)
 
     useEffect(()=>{
 
@@ -69,16 +69,35 @@ export default function SocketContextProvider({children}){
             console.log("Give me ",cardMustPlay)
          })
 
+         socket.on("game-ended",bValue=>{
+            setHasGameEnd(bValue)
+         })
+
+         socket.on("unset-gamestate",(message)=>{
+            unSetGameState()
+         })
+
+         socket.on("update-scores",(scores)=>{
+            setScores(prevScores=>{
+                let newScores = [...prevScores].map((newScore,i)=> newScore + scores[i])
+
+                return newScores
+            })
+         })
+
          return ()=>{
              if(Object.keys(socket).length){
                  socket.off("card-played",()=>{})
                  socket.off("switch-turn",()=>{})
                  socket.off("remote-pick-card",()=>{})
                  socket.off("card-must-play",()=>{})
+                 socket.off("game-ended",()=>{})
+                 socket.off("unset-gamestate",()=>{})
              }
          }
 
     },[socket])
+
 
     return (
         <SocketContext.Provider value={{socketId,socket,isHost,setIsHost,setSocketId}}>
