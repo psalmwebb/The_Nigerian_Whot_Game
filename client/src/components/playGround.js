@@ -11,7 +11,7 @@ import { SocketContext } from "../contexts/socketContext"
 
 export default function PlayGround({history:{push}}) {
     
-    const {gameState,setPenalty,setCardMustPlay,hasGameEnd,setHasGameEnd,gameMode,setGameEnd,setScores,
+    const {gameState,setPlayerTurns,hasGameEnd,setHasGameEnd,gameMode,setScores,
            setCanShare,showCardPicker,setCardStore,
            unSetGameState,initCardObj} = useContext(CardContext)
     const {socket,isHost} = useContext(SocketContext)
@@ -19,39 +19,6 @@ export default function PlayGround({history:{push}}) {
       if(gameMode === null){
         push("/")
       }
-
-
-      useEffect(()=>{
-        if(gameState.me.length === 0 && gameState.playArea.length !== 0){
-           
-            setHasGameEnd(true)
-            setTimeout(()=>{
-               setScores((prevScores)=>{
-                   let newScores = [...prevScores]
-                   newScores[0]+=1
-                   return newScores
-               })
-            },500)
-
-           if(gameMode === "multi-player"){
-              socket.emit('update-scores',[1,0])
-           }
-        }
-        else if(gameState.otherPlayer.length === 0 && gameState.playArea.length !== 0){
-             setHasGameEnd(true)
-             setTimeout(()=>{
-                setScores((prevScores)=>{
-                    let newScores = [...prevScores]
-                    newScores[1]+=1
-                    return newScores
-                })
-             },500)
-
-             if(gameMode === "multi-player"){
-                socket.emit('update-scores',[0,1])
-             }
-        }
-    },[gameState])
 
     useEffect(()=>{
 
@@ -80,24 +47,57 @@ export default function PlayGround({history:{push}}) {
     },[isHost,gameMode])
 
 
+
+    useEffect(()=>{
+      if(gameState.me.length === 0 && gameState.playArea.length !== 0){
+         
+          setHasGameEnd(true)
+          setTimeout(()=>{
+             setScores((prevScores)=>{
+                 let newScores = [...prevScores]
+                 newScores[0]+=1
+                 return newScores
+             })
+          },500)
+
+          setTimeout(()=>{
+             unSetGameState()
+
+          },1500)
+
+        //  if(gameMode === "multi-player"){
+        //     socket.emit('update-scores',[1,0])
+        //  }
+      }
+      else if(gameState.otherPlayer.length === 0 && gameState.playArea.length !== 0){
+           setHasGameEnd(true)
+           setTimeout(()=>{
+              setScores((prevScores)=>{
+                  let newScores = [...prevScores]
+                  newScores[1]+=1
+                  return newScores
+              })
+           },500)
+
+           setTimeout(()=>{
+            unSetGameState()
+           },1500)
+
+      }
+  },[gameState])
+
     useEffect(()=>{
 
       let hostCardStore,remoteCardStore;
 
       if(hasGameEnd){
+        console.log("Game Started...")
+        console.log(gameMode)
         setTimeout(()=>{
           if(gameMode === "multi-player"){
-            if(isHost === "host"){
-              setCanShare(false)
-              setPenalty({from:"",to:"",what:""})
-              setCardMustPlay("")
-              unSetGameState()
-              // socket.emit("game-ended",true)
-              // socket.emit("unset-gamestate","unset game state")
-              // socket.emit("update-penalty",{from:"",to:"",what:""})
+              if(isHost === "host"){
               [hostCardStore,remoteCardStore] = cardsForRemoteAndHost()
 
-              setTimeout(()=>{
                 socket.emit("send-cards-to-remote",remoteCardStore)
 
                 socket.on("remote-receive-cards",message=>{
@@ -105,27 +105,22 @@ export default function PlayGround({history:{push}}) {
      
                   setCardStore(hostCardStore).then(()=>{
                      setCanShare(true)
+                     setHasGameEnd(false)
+                    //  setPlayerTurns("me")
                   })
                })
-              },3500)
-
             }
           }
-          else if(gameMode === "singlePlayer"){
-            setCanShare(false)
-            setPenalty({from:"",to:"",what:""})
-            setCardMustPlay("")
-            unSetGameState()
-            setTimeout(()=>{
+          else if(gameMode === "single player"){
+
+            console.log("We share to single players")
               setCardStore().then(()=>{
                 setCanShare(true)
               })
-    
+              setPlayerTurns("me")
               setHasGameEnd(false)
-            },3500)
-
           }
-        },1500)
+        },2000)
       }
 
     },[hasGameEnd])
@@ -144,6 +139,7 @@ export default function PlayGround({history:{push}}) {
 
              setCardStore(hostCardStore).then(()=>{
                 setCanShare(true)
+                setPlayerTurns("me")
              })
           })
       })
@@ -161,6 +157,8 @@ export default function PlayGround({history:{push}}) {
 
           setCardStore(remoteCardStore).then(()=>{
             setCanShare(true)
+            setHasGameEnd(false)
+            setPlayerTurns("otherPlayer")
           })
       })
   })
@@ -169,9 +167,9 @@ export default function PlayGround({history:{push}}) {
        
     let localCardStore = initCardObj()
 
-    let cardStoreForRemote = [...localCardStore.slice(0,localCardStore.length - 10),
-                         ...localCardStore.slice(localCardStore.length - 5,localCardStore.length),
-                         ...localCardStore.slice(localCardStore.length - 10,localCardStore.length - 5)]
+    let cardStoreForRemote = [...localCardStore.slice(0,localCardStore.length - 4),
+                         ...localCardStore.slice(localCardStore.length - 2,localCardStore.length),
+                         ...localCardStore.slice(localCardStore.length - 4,localCardStore.length - 2)]
 
      return [localCardStore,cardStoreForRemote]
 

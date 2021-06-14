@@ -130,7 +130,7 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           break
         case 14:
           if(Object.keys(socket).length){
-              socket.emit("update-penalty",{from:"me",to:"otherPlayer",what:"Pick two"})
+              socket.emit("update-penalty",{from:"me",to:"otherPlayer",what:"Go to market"})
               socket.emit("card-played",newCardObj)
               socket.emit("switch-turn","me")
           }
@@ -140,9 +140,12 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
           setCardMustPlay("")
           break
         case 20:
-          if(Object.keys(socket).length){}
+          if(Object.keys(socket).length){
+            socket.emit("card-played",newCardObj)
+            socket.emit("switch-turn","me")
+          }
           playCard(type,newCardObj)
-          setShowCardPicker(true)
+          if(gameState.me.length > 1) setShowCardPicker(true)
           break 
         default:
           if(Object.keys(socket).length){

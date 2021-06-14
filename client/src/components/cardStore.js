@@ -39,13 +39,13 @@ export default function CardStore()
         let counter = 0
         let s = setInterval(()=>{
             ++counter
-            if(counter > 5){
+            if(counter > 2){
                 shareCard("otherPlayer")
             }
             else{
                 shareCard("me")
             }
-            if(counter === 10) clearInterval(s)
+            if(counter === 4) clearInterval(s)
         },300)
     })
 

@@ -69,21 +69,21 @@ export default function SocketContextProvider({children}){
             console.log("Give me ",cardMustPlay)
          })
 
-         socket.on("game-ended",bValue=>{
-            setHasGameEnd(bValue)
-         })
+        //  socket.on("game-ended",bValue=>{
+        //     setHasGameEnd(bValue)
+        //  })
 
-         socket.on("unset-gamestate",(message)=>{
-            unSetGameState()
-         })
+        //  socket.on("unset-gamestate",(message)=>{
+        //     unSetGameState()
+        //  })
 
-         socket.on("update-scores",(scores)=>{
-            setScores(prevScores=>{
-                let newScores = [...prevScores].map((newScore,i)=> newScore + scores[i])
+        //  socket.on("update-scores",(scores)=>{
+        //     setScores(prevScores=>{
+        //         let newScores = [...prevScores].map((newScore,i)=> newScore + scores[i])
 
-                return newScores
-            })
-         })
+        //         return newScores
+        //     })
+        //  })
 
          return ()=>{
              if(Object.keys(socket).length){

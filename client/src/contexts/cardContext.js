@@ -159,6 +159,9 @@ export default function CardContextProvider({children})
             return newGameState
     })
       setCanShare(false)
+      setPickACardCounter(0)
+      setPenalty({from:"",to:"",what:""})
+      setCardMustPlay("")
    }
 
     function initCardObj()
