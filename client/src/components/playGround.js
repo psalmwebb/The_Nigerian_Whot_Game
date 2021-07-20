@@ -8,10 +8,11 @@ import Score from "./score"
 // import { CardContext } from "../contexts/cardContext"
 import {useContext,useEffect,useRef} from "react"
 import { SocketContext } from "../contexts/socketContext"
+import Alert from "./alert"
 
 export default function PlayGround({history:{push}}) {
     
-    const {gameState,setPlayerTurns,hasGameEnd,setHasGameEnd,gameMode,setScores,
+    const {gameState,alertMessage,setPlayerTurns,hasGameEnd,setHasGameEnd,gameMode,setScores,
            setCanShare,showCardPicker,setCardStore,
            unSetGameState,initCardObj} = useContext(CardContext)
     const {socket,isHost} = useContext(SocketContext)
@@ -167,22 +168,25 @@ export default function PlayGround({history:{push}}) {
        
     let localCardStore = initCardObj()
 
-    let cardStoreForRemote = [...localCardStore.slice(0,localCardStore.length - 4),
-                         ...localCardStore.slice(localCardStore.length - 2,localCardStore.length),
-                         ...localCardStore.slice(localCardStore.length - 4,localCardStore.length - 2)]
+    let cardStoreForRemote = [...localCardStore.slice(0,localCardStore.length - 10),
+                         ...localCardStore.slice(localCardStore.length - 5,localCardStore.length),
+                         ...localCardStore.slice(localCardStore.length - 10,localCardStore.length - 5)]
 
      return [localCardStore,cardStoreForRemote]
 
    }
 
     return (
+      <>
        <div className={playGroundStyle}>
          <Score/>
-         <CardHolder type="otherPlayer"/>
+         <CardHolder type="otherPlayer" isFront={false}/>
          <CardStore mode={gameMode}/>
          <PlayArea mode={gameMode}/>   
-         <CardHolder type="me" mode={gameMode}/>
+         <CardHolder type="me" mode={gameMode} isFront={true}/>
          {showCardPicker && <CardPicker/>}
        </div>
+       <Alert value={alertMessage}/>
+      </>
     )
 }

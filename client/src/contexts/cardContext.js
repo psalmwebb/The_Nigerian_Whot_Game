@@ -38,6 +38,8 @@ export default function CardContextProvider({children})
 
     const [canShare,setCanShare] = useState(false)
 
+    const [alertMessage,setAlertMessage] = useState("Welcome...")
+
     // console.log(penalty)
 
     
@@ -225,7 +227,7 @@ export default function CardContextProvider({children})
             setShowCardPicker,setGameMode,gameState,shareCard,playCard,playerTurns,
             setPickACardCounter,pickACardCounter,setPlayerTurns,hasGameEnd,setHasGameEnd,
             penalty,setPenalty,pickRemoteCard,pickACard,setGameState,scores,setScores,
-            setCardStore,unSetGameState,setCanShare,canShare,initCardObj}}>
+            setCardStore,unSetGameState,setCanShare,canShare,initCardObj,alertMessage,setAlertMessage}}>
             {children}
         </CardContext.Provider>
     )

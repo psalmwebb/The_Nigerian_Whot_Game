@@ -3,7 +3,7 @@ const UTILS = {
     
   AI:class{
       constructor(gameState,playerTurns,setPlayerTurns,playCard,pickACard,penalty,
-        setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay){
+        setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay,setAlertMessage){
           this.gameState = gameState
           this.ownedCards = gameState.otherPlayer
           this.numOfCards = gameState.otherPlayer.length
@@ -17,6 +17,7 @@ const UTILS = {
           this.setPickACardCounter = setPickACardCounter
           this.cardMustPlay = cardMustPlay
           this.setCardMustPlay = setCardMustPlay
+          this.setAlertMessage = setAlertMessage
       }  
       
   autoPickCard(numOfTimes){
@@ -64,16 +65,16 @@ const UTILS = {
     if(this.penalty.to === "otherPlayer"){
       switch(this.penalty.what){
         case "Pick two":
-          console.log("Pick Two")
+          // this.setAlertMessage("You --> Pick Two")
           this.setPenalty({from:"",to:"",what:""})
           this.autoPickCard(2)
           return this.setPlayerTurns("me")
         case "Hold on":
-          console.log("Hold on")
+          // this.setAlertMessage("You --> Hold on")
           this.setPenalty({from:"",to:"",what:""})
           return this.setPlayerTurns("me")
         case "Go to market":
-          console.log("Go to market...")
+          // this.setAlertMessage("You --> Go to market...")
           this.setPenalty({from:"",to:"",what:""})
           this.autoPickCard(1)
           return this.setPlayerTurns("me")
@@ -133,25 +134,25 @@ const UTILS = {
     switch(cardChosen.cardNum){
        case 1:
        case 8:
-         console.log("Ai - Hold On")
+         this.setAlertMessage("Ai : Hold On")
          this.setPenalty({from:"otherPlayer",to:"me",what:"Hold on"})
          this.setPlayerTurns("otherPlayer")
          this.setCardMustPlay("")
          break
        case 2:
-         console.log("Ai - Pick two")
+         this.setAlertMessage("Ai : Pick two")
          this.updatePlayerTurnsWithDelay("me")
          this.setPenalty({from:"otherPlayer",to:"me",what:"Pick two"})
          this.setCardMustPlay("")
          break
        case 14:
-         console.log("Ai - Go to Market")
+         this.setAlertMessage("Ai : Go to Market")
          this.updatePlayerTurnsWithDelay("me")
          this.setPenalty({from:"otherPlayer",to:"me",what:"Go to market"})
          this.setCardMustPlay("")
          break
        case 20:
-         console.log("Give me ",cardRequest ? cardRequest : "stars")
+         this.setAlertMessage(`Ai : Give me ${cardRequest ? cardRequest : "stars"}`)
          this.setCardMustPlay(cardRequest ? cardRequest : "stars")
          this.updatePlayerTurnsWithDelay("me")
          break

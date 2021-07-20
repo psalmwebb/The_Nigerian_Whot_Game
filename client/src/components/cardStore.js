@@ -17,7 +17,7 @@ export default function CardStore()
     const cardStoreObj = useRef()
 
     let cardStore = gameState.cardStore.map((cardObj,i)=> 
-          <Card key={i} left={0} top={0} cardObj = {cardObj} playCard={()=>{}}/>)
+          <Card key={i} isFront={false} left={0} top={0} cardObj = {cardObj} playCard={()=>{}}/>)
 
 
     // console.log(isHost)
@@ -39,13 +39,13 @@ export default function CardStore()
         let counter = 0
         let s = setInterval(()=>{
             ++counter
-            if(counter > 2){
+            if(counter > 5){
                 shareCard("otherPlayer")
             }
             else{
                 shareCard("me")
             }
-            if(counter === 4) clearInterval(s)
+            if(counter === 10) clearInterval(s)
         },300)
     })
 

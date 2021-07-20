@@ -1,17 +1,46 @@
-import {cardStyle} from "../css/playground.module.css"
+import {cardStyle,cardStyleTopNum,cardStyleBottomNum,cardStyleHover} from "../css/playground.module.css"
 import {useCallback,useRef,useContext} from "react"
 import {CardContext} from "../contexts/cardContext"
 import {SocketContext} from "../contexts/socketContext"
+import generalImg from "../img/20_img.jpg"
+import circleImg from "../img/circle_img.jpg"
+import triangleImg from "../img/triangle_img.jpg"
+import squareImg from "../img/square_img.jpg"
+import starImg from "../img/star_img.jpg"
+import crossImg from "../img/cross_img.jpg"
+import cardBackImg from "../img/card_back_img.jpg"
 
 
-export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate})
+export default function Card({width,left,top,cardObj,playCard,type,isFront,shouldAnimate})
 {
     const cardRef = useRef()
 
     const {playerTurns,hasGameEnd,cardMustPlay,setCardMustPlay,setShowCardPicker,setPlayerTurns,
-          pickACardCounter,setPenalty,gameState} = useContext(CardContext)
+          pickACardCounter,setPenalty,gameState,setAlertMessage} = useContext(CardContext)
 
     const {socket} = useContext(SocketContext)
+
+    let computedImgIcon = ""
+
+    switch(cardObj.icon){
+      case "crosses":
+        computedImgIcon = crossImg
+        break
+      case "squares":
+        computedImgIcon = squareImg
+        break
+      case "triangle":
+        computedImgIcon = triangleImg
+        break
+      case "stars":
+        computedImgIcon = starImg
+        break
+      case "circle":
+        computedImgIcon = circleImg
+        break
+     default:
+        computedImgIcon = generalImg
+    }
 
      
     const prevPlayedCard = gameState.playArea[gameState.playArea.length - 1]
@@ -76,29 +105,29 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
 
       switch(pickACardCounter){
         case 2:
-          return console.log("You have to pick 2 card from the stack")
+          return setAlertMessage("You have to pick 2 card from the stack")
         case 1:
-          return console.log("You have to pick one more card from the stack")
+          return setAlertMessage("You have to pick one more card from the stack")
         case -1:
-          return console.log("Hold on...")
+          return setAlertMessage("Hold on...")
         default:
       }
 
       if(playerTurns !== type){
-        console.log("Not your turn")
+        setAlertMessage("Not your turn")
         return
       }
       
-      if(cardMustPlay){
+      if(cardMustPlay && cardObj.icon !== "whot"){
         if(cardObj.icon !== cardMustPlay){
-          console.log("You must play ",cardMustPlay)
+          setAlertMessage(`You must play ${cardMustPlay}`)
           return
         }
       }
       else if(prevPlayedCard){
         if((prevPlayedCard.icon !== cardObj.icon && prevPlayedCard.cardNum !== cardObj.cardNum) && cardObj.icon !== "whot")
         {
-          console.log("Card do not match..")
+          setAlertMessage("Card do not match..")
           return
         }
       }
@@ -162,9 +191,16 @@ export default function Card({width,left,top,cardObj,playCard,type,shouldAnimate
     }
 
     return (
-        <div className={cardStyle} onClick={playThisCard} style={localStyle} ref={cardRef}>
-          <div>{cardObj?.icon}</div>
-          <span>{cardObj?.cardNum}</span>
+        <div className={` ${cardStyle} ${type === "me" && cardStyleHover}`} onClick={playThisCard} style={localStyle} ref={cardRef}>
+        { isFront &&
+          <div>
+            <img src={computedImgIcon}/>
+            <span className={cardStyleTopNum}>{cardObj?.cardNum}</span>
+            <span className={cardStyleBottomNum}>{cardObj?.cardNum}</span>
+          </div>
+        }
+
+         { !isFront && <img src={cardBackImg}/> }
         </div>
     )
 }

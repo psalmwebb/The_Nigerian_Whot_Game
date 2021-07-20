@@ -9,6 +9,8 @@ export default function PlayArea()
 
     const cardPossessed = useRef([])
 
+    const currentCardObj  = gameState.playArea[gameState.playArea.length - 1]
+
     useEffect(()=>{
         cardPossessed.current = gameState.playArea.map((obj)=> obj.id)
 
@@ -19,13 +21,22 @@ export default function PlayArea()
 
     return (
         <div className={playAreaStyle}>
-            {
-                gameState.playArea.map(cardObj=> 
+            {/* { currentCardObj &&
                                 <Card key={Math.random()} 
-                                 type="playarea"
-                                 shouldAnimate={!cardPossessed.current.includes(cardObj.id)}
-                                cardObj ={cardObj} left ={0} 
-                                top={0} playCard={()=>{}}/> )
+                                 type="playarea" isFront={true}
+                                 shouldAnimate={!cardPossessed.current.includes(currentCardObj.id)}
+                                cardObj ={currentCardObj} left ={0} 
+                                top={0} playCard={()=>{}}/>
+            } */}
+
+            {
+                gameState.playArea.map(cardObj=>(
+                    <Card key={Math.random()} 
+                    type="playarea" isFront={true}
+                    shouldAnimate={!cardPossessed.current.includes(cardObj.id)}
+                   cardObj ={cardObj} left ={0} 
+                   top={0} playCard={()=>{}}/>
+                ))
             }
         </div>
     )

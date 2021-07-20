@@ -4,11 +4,11 @@ import {CardContext} from "../contexts/cardContext"
 import {useContext,useEffect,useRef} from "react"
 import UTILS from "../utils/utils"
 
-export default function CardHolder({type}){
+export default function CardHolder({type,isFront}){
 
     const {gameState,hasGameEnd,playCard,penalty,
            setPenalty,pickACard,playerTurns,setPickACardCounter,
-           gameMode,setPlayerTurns,cardMustPlay,setCardMustPlay} = useContext(CardContext)
+           gameMode,setPlayerTurns,cardMustPlay,setCardMustPlay,setAlertMessage} = useContext(CardContext)
 
     const cardPossessed = useRef([])
 
@@ -22,7 +22,7 @@ export default function CardHolder({type}){
     }
 
     const AI = new UTILS.AI(gameState,playerTurns,setPlayerTurns,playCard,
-               pickACard,penalty,setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay)
+               pickACard,penalty,setPenalty,setPickACardCounter,cardMustPlay,setCardMustPlay,setAlertMessage)
 
     useEffect(()=>{
         cardPossessed.current = cardObjs.map((obj)=> obj.id)
@@ -32,10 +32,10 @@ export default function CardHolder({type}){
         }
 
         if(gameState.otherPlayer.length === 2 && gameState.playArea.length){
-            console.log("semi last card")
+            setAlertMessage("AI : semi last card")
         }
         else if(gameState.otherPlayer.length === 1 && gameState.playArea.length){
-            console.log("Last card")
+            setAlertMessage("AI : Last card")
         }
 
     },[cardObjs,gameMode,playerTurns,type])
@@ -46,7 +46,7 @@ export default function CardHolder({type}){
         <div className={cardHolderStyle} style={addStyle} id={type}>
            {
                cardObjs.length ? cardObjs.map((cardObj,i)=>{
-                return <Card left={i * 15 + 3} top={0} id={cardObj?.id}
+                return <Card left={i * 15 + 3} top={0} id={cardObj?.id} isFront={isFront}
                              width ={10} key={Math.random()} 
                              shouldAnimate={!cardPossessed.current?.includes(cardObj?.id)}
                              cardObj = {cardObj} playCard={playCard} type ={type}/>
