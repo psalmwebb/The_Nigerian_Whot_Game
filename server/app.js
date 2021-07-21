@@ -1,5 +1,6 @@
 "use strict";
 const express = require("express");
+const path = require("path")
 
 
 const app = express();
@@ -7,7 +8,14 @@ const app = express();
 const socket = require("socket.io");
 
 
-const server = app.listen(5000, () => console.log("Serving on port 5000"));
+app.use(express.static(path.join(__dirname,"build")))
+
+app.get("*",(req,res)=>{
+    res.sendFile(path.join(__dirname,"build","index.html"))
+})
+
+
+const server = app.listen(5000, ()=> console.log("Serving on port 5000"));
 
 
 const io = socket(server, {

@@ -6,7 +6,7 @@ import io from "socket.io-client"
 
 export const SocketContext = createContext()
 
-const URL = 'http://localhost:5000'
+const URL = process.env.REACT_APP_MODE === "development" ? 'http://localhost:5000' : "/"
 
 export default function SocketContextProvider({children}){
     
@@ -21,7 +21,7 @@ export default function SocketContextProvider({children}){
     useEffect(()=>{
 
         if(gameMode === "multi-player" && socketId){
-            setSocket(io.connect(URL,{query:{username:socketId}}))
+            setSocket(io.connect(URL,{query:{id:socketId}}))
         }
 
     },[gameMode,socketId])

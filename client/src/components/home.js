@@ -9,8 +9,6 @@ export default function Home({history})
     const {socket,isHost,setIsHost,socketId,setSocketId} = useContext(SocketContext)
 
     const [showForm,setShowForm] = useState()
-    const [roomID,setRoomID] = useState("")
-    const [countDown,setCountDown] = useState(15)
     const [showJoinForm,setShowJoinForm] = useState(false)
     const inputRefObj = useRef()
 
@@ -34,24 +32,9 @@ export default function Home({history})
 
     function handleHostClick(e){
 
-      setSocketId("test123")
-
-      let s = setInterval(()=>{
-         
-        setCountDown((prevCountDown)=>{
-           if(prevCountDown === 0){
-              clearInterval(s)
-           }
-           else{
-              return prevCountDown - 1
-           }
-        })
-      },1000)
-
-      setTimeout(()=>{
-        setIsHost(e.target.id)
-        setGameMode("multi-player")
-      },16000)
+      setSocketId((Math.random() * 10e10).toString(32))
+      setIsHost(e.target.id)
+      setGameMode("multi-player")
     }
 
     useEffect(()=>{
@@ -75,12 +58,6 @@ export default function Home({history})
                           <button id="host" onClick={handleHostClick}>Host</button>
                          <button id="join" onClick={handleClick2}>Join</button>
                          </div>}
-            { socketId && !showJoinForm && <section>
-              <p>Your room id is : <b><big>{socketId}</big></b></p>
-             {<p>Copy and send this id to the other player</p>} 
-              <p><small>Redirected in {countDown}s</small></p>
-            </section>
-            }
 
             { showJoinForm && <section>
               <label>Enter room ID :</label>

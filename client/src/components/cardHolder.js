@@ -16,6 +16,8 @@ export default function CardHolder({type,isFront}){
 
     // console.log(cardObjs)
 
+    const cardHolderObjRef = useRef()
+
     let addStyle = {
         top:type === "otherPlayer" ? "0" : null,
         bottom:type === "me" ? "0" : null
@@ -42,11 +44,25 @@ export default function CardHolder({type,isFront}){
 
     // console.log(cardObjs)
 
+    useEffect(()=>{
+       
+        let s = setTimeout(()=>{
+            
+            cardHolderObjRef.current.addEventListener("mouseover",()=>{
+                cardHolderObjRef.current.style.overflow = "auto"
+            })
+        },5000)
+
+        return ()=>{
+           clearTimeout(s);
+        }
+    },[])
+
     return (
-        <div className={cardHolderStyle} style={addStyle} id={type}>
+        <div className={cardHolderStyle} style={addStyle} id={type} ref={cardHolderObjRef}>
            {
                cardObjs.length ? cardObjs.map((cardObj,i)=>{
-                return <Card left={i * 15 + 3} top={0} id={cardObj?.id} isFront={isFront}
+                return <Card left={i * 15 + 3} top={5} id={cardObj?.id} isFront={isFront}
                              width ={10} key={Math.random()} 
                              shouldAnimate={!cardPossessed.current?.includes(cardObj?.id)}
                              cardObj = {cardObj} playCard={playCard} type ={type}/>

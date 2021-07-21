@@ -6,7 +6,7 @@ import PlayArea from "./playArea"
 import CardPicker from "./cardPicker"
 import Score from "./score"
 // import { CardContext } from "../contexts/cardContext"
-import {useContext,useEffect,useRef} from "react"
+import {useContext,useEffect,useState,useRef} from "react"
 import { SocketContext } from "../contexts/socketContext"
 import Alert from "./alert"
 
@@ -15,7 +15,8 @@ export default function PlayGround({history:{push}}) {
     const {gameState,alertMessage,setPlayerTurns,hasGameEnd,setHasGameEnd,gameMode,setScores,
            setCanShare,showCardPicker,setCardStore,
            unSetGameState,initCardObj} = useContext(CardContext)
-    const {socket,isHost} = useContext(SocketContext)
+    const {socket,socketId,isHost} = useContext(SocketContext)
+    const [multiConn,setMultiConn] = useState(false)
 
       if(gameMode === null){
         push("/")
@@ -131,6 +132,8 @@ export default function PlayGround({history:{push}}) {
       const [hostCardStore,remoteCardStore] = cardsForRemoteAndHost()
 
       socket.on("opp-connected",(message)=>{
+          
+          setMultiConn(true)
           console.log(message)
 
           socket.emit("send-cards-to-remote",remoteCardStore)
@@ -185,6 +188,12 @@ export default function PlayGround({history:{push}}) {
          <PlayArea mode={gameMode}/>   
          <CardHolder type="me" mode={gameMode} isFront={true}/>
          {showCardPicker && <CardPicker/>}
+
+         { !multiConn && isHost === "host" && <section>
+              <p>Your room id is : <b><big>{socketId}</big></b></p>
+             {<p>Copy and send this id to the other player</p>} 
+            </section>
+            }
        </div>
        <Alert value={alertMessage}/>
       </>
