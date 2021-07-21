@@ -16,7 +16,7 @@ export default function SocketContextProvider({children}){
 
     const [socketId,setSocketId] = useState(null)
     const {gameMode,setPenalty,setCardMustPlay,playCard,setPickACardCounter, 
-           pickRemoteCard,setPlayerTurns,setHasGameEnd,setScores,unSetGameState} = useContext(CardContext)
+           pickRemoteCard,setPlayerTurns,setHasGameEnd,setScores,unSetGameState,setAlertMessage} = useContext(CardContext)
 
     useEffect(()=>{
 
@@ -66,7 +66,7 @@ export default function SocketContextProvider({children}){
          socket.on("card-must-play",cardMustPlay=>{
             setCardMustPlay(cardMustPlay)
 
-            console.log("Give me ",cardMustPlay)
+            setAlertMessage(`Other Player : Give me  ${cardMustPlay}`)
          })
 
         //  socket.on("game-ended",bValue=>{
